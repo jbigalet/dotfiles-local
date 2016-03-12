@@ -1,6 +1,0 @@
-# this file is autoincluded with i3 global config at startup by xinitr
-
-# thinkpad x201 media keys
-bindsym XF86MonBrightnessUp exec sudo ~/.this/bin/screen_backlight_x201 100
-bindsym XF86MonBrightnessDown exec sudo ~/.this/bin/screen_backlight_x201 -100
-

@@ -1,4 +1,7 @@
 # vim:filetype=sh
+export EDITOR='vim'
+export HISTSIZE=100000
+
 alias vim="vimx"
 
 alias g="git clone"
@@ -21,21 +24,27 @@ alias gpo="git push origin"
 alias gg="git pull --rebase origin master"
 alias ggo="git pull --rebase origin"
 alias gb="git branch -vv"
+alias gba="git branch -vv --all"
 alias gbs="git branch"
 alias gt="git stash"
 alias gtp="git stash pop"
-alias gtl="git stash show"
-alias gts="git stash show -p"
+alias gtf="git stash show"
+alias gtd="git stash show -p"
+alias gtl="git stash list"
 alias gh="git checkout"
 # __git_complete gh _git_checkout
 alias ghn="git checkout -B"
 # __git_complete ghn _git_checkout
 alias gf="git fetch"
+alias gfa="git fetch --all"
 alias gfo="git fetch origin"
+alias gfoa="git fetch --all origin"
 alias gym="git merge"
 alias gymm="git merge master"
 alias gyr="git rebase"
 alias gyrm="git rebase master"
+alias grs="git config --get remote.origin.url"
+alias ge="git reflog"
 
 alias tarx="tar -zxvf"
 alias tarc="tar -zcvf"
@@ -49,6 +58,7 @@ alias ls="ls --color=auto"
 alias ll="ls -Ahltr --color=auto"
 alias grep="grep --color=auto"
 alias gr="grep -nr"
+alias gri="gr -i"
 
 alias e="vim"
 alias p="ipython"
@@ -58,6 +68,8 @@ alias nocaps="setxkbmap -option caps:escape"
 alias reload="source ~/.bashrc"
 
 alias tat="tmux attach -t"
+
+alias zl="z -l"
 
 function mkdir_cd() {
   mkdir -p $1
@@ -73,15 +85,27 @@ shopt -s autocd
 
 . ~/.bin/packages/z/z.sh
 
-alias re="rez env"
-alias fe="re envTools -- rfetch"
+alias fe="rez env envTools -- rfetch"
+
+function lls() {
+  llsr $@ -maxdepth 1
+}
+
+function llsr() {
+  find $@ -name "*.py" -nowarn -exec wc -l {} + | sort -rn
+}
+
+function llsc() {
+  find $@ -nowarn -exec wc -l {} + | sort -rn
+}
 
 function cdp() {
-  package_dir=$(re libPkg -- cd2pkg $1)
+  package_dir=`rez env libPkg -- cd2pkg $1`
+  echo $package_dir
   if [ $? != 0 ]; then
-    $cdp_err=$?
+    # $cdp_err=$?
     printf "Impossible to find rez package $1\n"
-    exit $cdp_err
+    # exit $cdp_err
   else
     cd $package_dir
   fi
@@ -93,15 +117,120 @@ function cdf() {
 }
 
 function asot() {
-  mplayer http://archive.org/download/Armin_Van_Buuren_-_A_State_Of_Trance_$1/Armin_Van_Buuren_-_A_State_Of_Trance_$1.mp3
+  fc=~/.asot
+
+  n=$1
+  if [[ ! $1 ]]; then
+    if [[ -f $fc ]]; then
+      n=`cat $fc`
+    else
+      n=630
+    fi
+  fi
+
+  echo $((n+1)) > "$fc"
+
+  mplayer http://archive.org/download/Armin_Van_Buuren_-_A_State_Of_Trance_$n/Armin_Van_Buuren_-_A_State_Of_Trance_$n.mp3
 }
 
-alias proscope="re proscope -- proscope"
+alias proscope="rez env proscope -- proscope"
 
+function current_workspace(){
+  CURRENT=$(($(wmctrl -d | grep "*" | cut -d' ' -f1)+1))
+
+  case $CURRENT in
+    6  ) CAPP='Maya'   ;;
+    7  ) CAPP='Katana' ;;
+    8  ) CAPP='Houdini';;
+    9  ) CAPP='Nuke'   ;;
+    10 ) CAPP='Mari'   ;;
+  esac
+
+  if [[ $CAPP ]]; then
+    echo $CAPP
+  fi
+}
+
+function c() {
+  if [[ $@ ]]; then
+    rez context | grep $@
+  else
+    rez context
+  fi
+}
+
+function re() {
+  f=~/.userrezenv
+
+  if [[ $@ ]]; then
+    args=$@
+    echo $@ > "$f"
+  else
+    args=`cat $f`
+  fi
+
+  cw=$(current_workspace)
+
+  args=${args//@/$cw}
+  args=${args//€/${cw,,}}
+
+  echo "rez env $args"
+  rez env $args
+}
+
+function re_nolog() {
+  f=~/.userrezenv
+
+  if [[ $@ ]]; then
+    args=$@
+  else
+    args=`cat $f`
+  fi
+
+  cw=$(current_workspace)
+
+  args=${args//@/$cw}
+  args=${args//€/${cw,,}}
+
+  echo "rez env $args"
+  rez env $args
+}
+
+function rl() {
+  f=~/.userrezlaunch
+
+  if [[ $@ ]]; then
+    args=$@
+    echo $@ > "$f"
+  else
+    args=`cat $f`
+  fi
+
+  re_nolog $args -- €
+}
+
+# export WORKON_HOME=$HOME/.virtualenvs
+# export PROJECT_HOME=$HOME/Devel
+# source /usr/bin/virtualenvwrapper.sh
 
 source ~/.bin/git-prompt.sh
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+## git_ps1 timeout -- requires bash 4.3:
+# _timeout() { ( set +b; sleep "$1" & "${@:2}" & wait -n; r=$?; kill -9 `jobs -p`; exit $r; ) }
+# eval "__orig$(declare -f __git_ps1)" && __git_ps1() { ( git() { timeout 0.3 /usr/bin/git "$@"; }; _timeout 0.5 __orig__git_ps1 "$@"; ) }
+## bash <4.3 ~workaround:
+export -f __git_ps1
+export -f __git_eread
+
 export GIT_PS1_SHOWDIRTYSTATE=1
 export GIT_PS1_SHOWUNTRACKEDFILES=1
-export PS1=${PS1:0:-2}'\033[0;31m$(__git_ps1)\033[0m > '
+# export PS1=${PS1:0:-2}'\[\033[0;31m\]$(__git_ps1)\[\033[0m\] > '  # no timeout or bash 4.3
+export PS1=${PS1:0:-2}'\[\033[0;31m\]$(timeout 0.5 bash -c __git_ps1)\[\033[0m\] > '  # timeout with bash <4.3
+
+export PATH="$PATH:~/.bin"
 
 source ~/.bin/alias-completion.sh
+
+export REZ_DEV_ROOT=/datas/jbi/packages/mikros/env/rez/dev/

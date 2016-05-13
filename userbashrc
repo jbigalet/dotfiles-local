@@ -59,6 +59,7 @@ alias ll="ls -Ahltr --color=auto"
 alias grep="grep --color=auto"
 alias gr="grep -nr"
 alias gri="gr -i"
+alias j="jobs -l"
 
 alias e="vim"
 alias p="ipython"
@@ -178,6 +179,12 @@ function re() {
   rez env $args
 }
 
+function re+ {
+  f=~/.userrezenv
+
+  re `cat $f` $@
+}
+
 function re_nolog() {
   f=~/.userrezenv
 
@@ -208,6 +215,23 @@ function rl() {
 
   re_nolog $args -- €
 }
+
+function man() {
+  f=~/.currentman
+
+  if [[ $@ ]]; then
+    args=$@
+    echo $@ > "$f"
+  else
+    args=`cat $f`
+  fi
+
+  /usr/bin/man $args
+}
+
+alias m=man
+
+
 
 # export WORKON_HOME=$HOME/.virtualenvs
 # export PROJECT_HOME=$HOME/Devel

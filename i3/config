@@ -4,3 +4,5 @@
 bindsym XF86MonBrightnessUp exec sudo ~/.this/bin/screen_backlight_x201 100
 bindsym XF86MonBrightnessDown exec sudo ~/.this/bin/screen_backlight_x201 -100
 
+bindsym $mod+w exec /usr/bin/mplayer /home/jbigalet/whoop.mp3
+

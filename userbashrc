@@ -1,6 +1,6 @@
 # vim:filetype=sh
 export EDITOR='vim'
-export HISTSIZE=100000
+export HISTSIZE=1000000
 
 alias vim="vimx"
 
@@ -25,7 +25,7 @@ alias gg="git pull --rebase origin master"
 alias ggo="git pull --rebase origin"
 alias gb="git branch -vv"
 alias gba="git branch -vv --all"
-alias gbs="git branch"
+alias gbn="git branch"
 alias gt="git stash"
 alias gtp="git stash pop"
 alias gtf="git stash show"
@@ -43,8 +43,13 @@ alias gym="git merge"
 alias gymm="git merge master"
 alias gyr="git rebase"
 alias gyrm="git rebase master"
+alias gyrc="git rebase --continue"
+alias gyra="git rebase --abort"
+alias gyri="git rebase --interactive"
 alias grs="git config --get remote.origin.url"
 alias ge="git reflog"
+alias grn="git remote add origin"
+alias gsh="git show"
 
 alias tarx="tar -zxvf"
 alias tarc="tar -zcvf"
@@ -71,6 +76,9 @@ alias reload="source ~/.bashrc"
 alias tat="tmux attach -t"
 
 alias zl="z -l"
+
+alias np="sh ~/.this/bin/sshnopass"
+alias sp="sh ~/.this/bin/sshsetpass"
 
 function mkdir_cd() {
   mkdir -p $1
@@ -257,4 +265,4 @@ export PATH="$PATH:~/.bin"
 
 source ~/.bin/alias-completion.sh
 
-export REZ_DEV_ROOT=/datas/jbi/packages/mikros/env/rez/dev/
+[[ $HOSTNAME = "vfxpc330.mikros.int" ]] && export REZ_DEV_ROOT=/datas/jbi/packages/mikros/env/rez/dev/

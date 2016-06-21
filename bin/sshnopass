@@ -1,0 +1,1 @@
+openssl rsa -in ~/.ssh/id_rsa_secure -out ~/.ssh/id_rsa

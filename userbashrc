@@ -41,6 +41,7 @@ alias gfo="git fetch origin"
 alias gfoa="git fetch --all origin"
 alias gym="git merge"
 alias gymm="git merge master"
+alias gyma="git merge --abort"
 alias gyr="git rebase"
 alias gyrm="git rebase master"
 alias gyrc="git rebase --continue"
@@ -139,7 +140,7 @@ function asot() {
 
   echo $((n+1)) > "$fc"
 
-  mplayer http://archive.org/download/Armin_Van_Buuren_-_A_State_Of_Trance_$n/Armin_Van_Buuren_-_A_State_Of_Trance_$n.mp3
+  mplayer -ss 60 http://archive.org/download/Armin_Van_Buuren_-_A_State_Of_Trance_$n/Armin_Van_Buuren_-_A_State_Of_Trance_$n.mp3
 }
 
 alias proscope="rez env proscope -- proscope"
@@ -261,8 +262,12 @@ export GIT_PS1_SHOWUNTRACKEDFILES=1
 # export PS1=${PS1:0:-2}'\[\033[0;31m\]$(__git_ps1)\[\033[0m\] > '  # no timeout or bash 4.3
 export PS1=${PS1:0:-2}'\[\033[0;31m\]$(timeout 0.5 bash -c __git_ps1)\[\033[0m\] > '  # timeout with bash <4.3
 
+set -o vi
+
 export PATH="$PATH:~/.bin"
 
 source ~/.bin/alias-completion.sh
 
-[[ $HOSTNAME = "vfxpc330.mikros.int" ]] && export REZ_DEV_ROOT=/datas/jbi/packages/mikros/env/rez/dev/
+[[ $HOSTNAME = "frapcanim2013.mikros.int" ]] && export REZ_DEV_ROOT=/datas/jbi/packages/mikros/env/rez/dev/
+# [[ $HOSTNAME = "frapcanim2013.mikros.int" ]] && export REZ_CONFIG_FILE=/homes/jbi/.rezconfig.py
+# [[ $HOSTNAME = "frapcanim2013.mikros.int" ]] && export REZ_USE_MEMCACHED=1

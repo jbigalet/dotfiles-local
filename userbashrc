@@ -2,7 +2,14 @@
 export EDITOR='vim'
 export HISTSIZE=1000000
 
-alias vim="vimx"
+alias vim=vimx
+# function vim() {
+#   if hash vimx 2>/dev/null; then
+#     vimx "$@"
+#   else
+#     vim "$@"
+#   fi
+# }
 
 alias g="git clone"
 alias gs="git status -sb"
@@ -239,6 +246,32 @@ function man() {
 }
 
 alias m=man
+
+
+function sff() {
+    locate --database /datas/jbi/$1.locate.db ${@:2}
+}
+
+function sff_rebuild() {
+    updatedb --require-visibility 0 --output /datas/jbi/$1--database-root /s/prods/$1
+}
+
+function mkpackage() {
+    cd $(python /homes/jbi/newpackage.py "$1" "$2")
+}
+
+function s() {
+    sess=$(find $(git rev-parse --show-toplevel) -name Session.vim -print -quit)
+    if [[ $? == 0 && $sess ]]; then
+        e -S $sess
+    else
+        e
+    fi
+}
+
+function wy() {
+    stdbuf -oL -eL ${@:2} | tee $1
+}
 
 
 

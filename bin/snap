@@ -1,0 +1,7 @@
+snap() {
+    local d=$(date '+%Y-%m-%d__%H-%M-%S')
+    cd ~/shady-part-of-me
+    local c=$(git stash create)  # "screenshot ${d}")
+    xwd -name ":-)" | convert xwd: ~/screenshots/screenshot_${d}__${c}.png && mplayer ~/Downloads/whoop.mp3
+}
+snap
